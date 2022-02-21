@@ -33,8 +33,8 @@ app.get("/games", (request, response) => {
     response.json(DataBase.games);
 });
 
-app.get("/game/:id",(request,response) => {
-    if(isNaN(request.params.id)){
+app.get("/game/:id", (request, response) => {
+    if (isNaN(request.params.id)) {
         response.sendStatus(400);
         return;
     }
@@ -42,9 +42,44 @@ app.get("/game/:id",(request,response) => {
     var id = parseInt(request.params.id);
     game = DataBase.games.find(game => game.id == id);
 
-    if(game != undefined){
+    if (game != undefined) {
         response.statuscode = 200;
         response.json(game);
+        return;
+    }
+
+    response.sendStatus(404);
+})
+
+app.post("/game", (request, response) => {
+    var { title, year, price } = request.body;
+    if (title == undefined || isNaN(year) || isNaN(price)) {
+        response.sendStatus(400);
+        return;
+    }
+
+    DataBase.games.push({
+        id: 10,
+        title,
+        year,
+        price
+    });
+
+    response.sendStatus(200);
+})
+
+app.delete("/game/:id", (request, response) => {
+    if (isNaN(request.params.id)) {
+        response.sendStatus(400);
+        return;
+    }
+
+    var id = parseInt(request.params.id);
+    index = DataBase.games.findIndex(game => game.id == id);
+
+    if (index != -1) {
+        DataBase.games.splice(index, 1);
+        response.sendStatus(200);
         return;
     }
 
