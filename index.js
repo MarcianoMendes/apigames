@@ -86,6 +86,37 @@ app.delete("/game/:id", (request, response) => {
     response.sendStatus(404);
 })
 
+app.put("/game/:id", (request, response) => {
+    if (isNaN(request.params.id)) {
+        response.sendStatus(400);
+        return;
+    }
+
+    var id = parseInt(request.params.id);
+    game = DataBase.games.find(game => game.id == id);
+
+    if (game != undefined) {
+        var { title, year, price } = request.body;
+        if (title != undefined) {
+            game.title = title;
+        }
+
+        if (!isNaN(year)) {
+            game.year = year;
+        }
+
+        if (!isNaN(price)) {
+            game.price = price;
+        }
+
+        response.sendStatus(200);
+        return;
+    }
+
+    response.sendStatus(404);
+})
+
+
 app.listen(45678, () => {
     console.log('API Rodando')
 });
