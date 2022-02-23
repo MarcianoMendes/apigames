@@ -28,6 +28,20 @@ var DataBase = {
             price: 78
         }
     ],
+    users: [
+        {
+            id: 1,
+            name: 'joao',
+            email: 'joao@joao.com',
+            password: 'joao123'
+        },
+        {
+            id: 2,
+            name: 'maria',
+            email: 'maria@maria.com',
+            password: 'maria123'
+        }
+    ]
 }
 
 app.get("/games", (request, response) => {
@@ -51,7 +65,7 @@ app.get("/game/:id", (request, response) => {
     }
 
     response.sendStatus(404);
-})
+});
 
 app.post("/game", (request, response) => {
     var { title, year, price } = request.body;
@@ -68,7 +82,7 @@ app.post("/game", (request, response) => {
     });
 
     response.sendStatus(200);
-})
+});
 
 app.delete("/game/:id", (request, response) => {
     if (isNaN(request.params.id)) {
@@ -86,7 +100,7 @@ app.delete("/game/:id", (request, response) => {
     }
 
     response.sendStatus(404);
-})
+});
 
 app.put("/game/:id", (request, response) => {
     if (isNaN(request.params.id)) {
@@ -116,9 +130,36 @@ app.put("/game/:id", (request, response) => {
     }
 
     response.sendStatus(404);
+});
+
+app.post("/auth/", (request, response) => {
+    var { email, password } = request.body;
+
+    if (email != undefined) {
+        response.sendStatus(400);
+        response.json({ err: "E-mail enviado é inválido!" });
+        return;
+    }
+
+    user = DataBase.users.find(user => user.email == email);
+    
+    if (user != undefined) {
+        if (password == user.password) {
+            response.statuscode = 200;
+            response.json({ token: "token falso" });
+            return;
+        }
+
+        response.statuscode = 401;
+        response.json({ err: "Credenciais Inválidas!" })
+        return;
+    }
+
+    response.sendStatus(404);
+    response.json({ err: "E-mail enviado não foi encontradao na base de dados!" });
 })
 
 
 app.listen(45678, () => {
-    console.log('API Rodando')
+    console.log('API Rodando!')
 });
