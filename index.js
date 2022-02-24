@@ -159,15 +159,23 @@ app.put("/game/:id", (request, response) => {
     response.sendStatus(404);
 });
 
+<<<<<<< HEAD
 app.post("/auth", (request, response) => {
     var { email, password } = request.body;
     if (email == undefined) {
+=======
+app.post("/auth/", (request, response) => {
+    var { email, password } = request.body;
+
+    if (email != undefined) {
+>>>>>>> d7ef6d3e49cdc8b90fa3917c7363a7e7fe3897aa
         response.sendStatus(400);
         response.json({ err: "E-mail enviado é inválido!" });
         return;
     }
 
     user = DataBase.users.find(user => user.email == email);
+<<<<<<< HEAD
 
     if (user != undefined) {
         if (password == user.password) {
@@ -182,6 +190,13 @@ app.post("/auth", (request, response) => {
                 response.statuscode = 200;
             });
 
+=======
+    
+    if (user != undefined) {
+        if (password == user.password) {
+            response.statuscode = 200;
+            response.json({ token: "token falso" });
+>>>>>>> d7ef6d3e49cdc8b90fa3917c7363a7e7fe3897aa
             return;
         }
 
@@ -190,7 +205,11 @@ app.post("/auth", (request, response) => {
         return;
     }
 
+<<<<<<< HEAD
     response.statuscode = 404;
+=======
+    response.sendStatus(404);
+>>>>>>> d7ef6d3e49cdc8b90fa3917c7363a7e7fe3897aa
     response.json({ err: "E-mail enviado não foi encontradao na base de dados!" });
 })
 
