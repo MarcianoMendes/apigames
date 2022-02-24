@@ -9,6 +9,11 @@
 </head>
 
 <body>
+    <h2>Login</h2>
+    <input type="text" id="email" placeholder="E-mail"><br>
+    <input type="password" id="password" placeholder="Password"><br>
+    <button type="button" onclick="login()">Logar</button>
+
     <hr>
     <h4>Lista de Games</h4>
     <ul id="games"></ul>
@@ -19,7 +24,7 @@
     <input type="text" id="price" placeholder="Preço"><br>
     <button type="button" onclick="insertGame()">Inserir</button>
     <h4>Editar Game</h4>
-    <input type="text" id="id_edit" placeholder="id" readonly><br> 
+    <input type="text" id="id_edit" placeholder="id" readonly><br>
     <input type="text" id="title_edit" placeholder="Título"><br>
     <input type="number" id="year_edit" placeholder="Ano"><br>
     <input type="text" id="price_edit" placeholder="Preço"><br>
@@ -28,6 +33,29 @@
 </body>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
+    axiosconfig = {
+        headers: {
+            Authorization: getAuthToken()
+        }
+    }
+
+    function login() {
+        var email = document.getElementById("email").value;
+        var password = document.getElementById("password").value;
+        axios.post("http://localhost:45678/auth", { email, password }).then(response => {
+            token = response.data.token;
+            localStorage.setItem("token", token);
+            axiosconfig.headers.Authorization = getAuthToken();
+            alert("Logado com sucesso!");
+        }).catch(error => {
+            console.log(error);
+            alert("Login incorreto!");
+        })
+    }
+
+    function getAuthToken() {
+        return("Bearer " + localStorage.getItem("token"));
+    }
 
     function insertGame() {
         var title = document.getElementById("title");
@@ -40,7 +68,7 @@
             price: price.value
         }
 
-        axios.post("http://localhost:45678/game", game).then(response => {
+        axios.post("http://localhost:45678/game", game,axiosconfig).then(response => {
             if (response.status == 200) {
                 alert("Game Cadastrado!");
             }
@@ -51,7 +79,7 @@
 
     function excludeGame(listitem) {
         var id = listitem.getAttribute("data-id");
-        axios.delete("http://localhost:45678/game/" + id).then(response => {
+        axios.delete("http://localhost:45678/game/" + id,axiosconfig).then(response => {
             if (response.status == 200) {
                 alert("Game Excluído!");
             }
@@ -61,7 +89,7 @@
     }
 
     function editGame(listitem) {
-        document.getElementById("id_edit").value = listitem.getAttribute("data-id"); 
+        document.getElementById("id_edit").value = listitem.getAttribute("data-id");
         document.getElementById("title_edit").value = listitem.getAttribute("data-title");
         document.getElementById("year_edit").value = listitem.getAttribute("data-year");
         document.getElementById("price_edit").value = listitem.getAttribute("data-price");
@@ -77,8 +105,8 @@
             year: year.value,
             price: price.value
         }
-        
-        axios.put("http://localhost:45678/game/" + id.value, game).then(response => {
+
+        axios.put("http://localhost:45678/game/" + id.value, game, axiosconfig).then(response => {
             if (response.status == 200) {
                 id.value = "";
                 title.value = "";
@@ -91,7 +119,7 @@
         })
     }
 
-    axios.get("http://localhost:45678/games").then(response => {
+    axios.get("http://localhost:45678/games", axiosconfig).then(response => {
         var games = response.data;
         var listofgames = document.getElementById("games");
         games.forEach(game => {

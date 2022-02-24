@@ -74,7 +74,7 @@ var DataBase = {
 
 app.get("/games", auth, (request, response) => {
     response.statuscode = 200;
-    response.json({ user: request.loggedUser, games: DataBase.games });
+    response.json(DataBase.games);
 });
 
 app.get("/game/:id", auth, (request, response) => {
@@ -162,35 +162,34 @@ app.put("/game/:id", auth, (request, response) => {
 app.post("/auth", (request, response) => {
     var { email, password } = request.body;
     if (email == undefined) {
-        response.sendStatus(400);
+        response.status(400);
         response.json({ err: "E-mail enviado é inválido!" });
         return;
     }
 
-    user = DataBase.users.find(user => user.email == email);
-
+    user = DataBase.users.find(user => user.email == email);    
     if (user != undefined) {
         if (password == user.password) {
             jsonwebtoken.sign({ id: user.id, email: user.email }, jwtSecret, { expiresIn: "24h" }, (err, token) => {
                 if (err) {
-                    response.statuscode = 400;
+                    response.status(400);
                     response.json({ err: "Falha interna!" });
                     return;
                 }
 
                 response.json({ token: token });
-                response.statuscode = 200;
+                response.status(200);
             });
 
             return;
         }
 
-        response.statuscode = 401;
+        response.status(401);
         response.json({ err: "Credenciais Inválidas!" })
         return;
     }
 
-    response.statuscode = 404;
+    response.status(404);
     response.json({ err: "E-mail enviado não foi encontradao na base de dados!" });
 })
 
