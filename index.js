@@ -74,10 +74,10 @@ var DataBase = {
 
 app.get("/games", auth, (request, response) => {
     response.statuscode = 200;
-    response.json({user: request.loggedUser, games: DataBase.games});
+    response.json({ user: request.loggedUser, games: DataBase.games });
 });
 
-app.get("/game/:id", (request, response) => {
+app.get("/game/:id", auth, (request, response) => {
     if (isNaN(request.params.id)) {
         response.sendStatus(400);
         return;
@@ -95,7 +95,7 @@ app.get("/game/:id", (request, response) => {
     response.sendStatus(404);
 });
 
-app.post("/game", (request, response) => {
+app.post("/game", auth, (request, response) => {
     var { title, year, price } = request.body;
     if (title == undefined || isNaN(year) || isNaN(price)) {
         response.sendStatus(400);
@@ -112,7 +112,7 @@ app.post("/game", (request, response) => {
     response.sendStatus(200);
 });
 
-app.delete("/game/:id", (request, response) => {
+app.delete("/game/:id", auth, (request, response) => {
     if (isNaN(request.params.id)) {
         response.sendStatus(400);
         return;
@@ -130,7 +130,7 @@ app.delete("/game/:id", (request, response) => {
     response.sendStatus(404);
 });
 
-app.put("/game/:id", (request, response) => {
+app.put("/game/:id", auth, (request, response) => {
     if (isNaN(request.params.id)) {
         response.sendStatus(400);
         return;
@@ -159,23 +159,15 @@ app.put("/game/:id", (request, response) => {
     response.sendStatus(404);
 });
 
-<<<<<<< HEAD
 app.post("/auth", (request, response) => {
     var { email, password } = request.body;
     if (email == undefined) {
-=======
-app.post("/auth/", (request, response) => {
-    var { email, password } = request.body;
-
-    if (email != undefined) {
->>>>>>> d7ef6d3e49cdc8b90fa3917c7363a7e7fe3897aa
         response.sendStatus(400);
         response.json({ err: "E-mail enviado é inválido!" });
         return;
     }
 
     user = DataBase.users.find(user => user.email == email);
-<<<<<<< HEAD
 
     if (user != undefined) {
         if (password == user.password) {
@@ -190,13 +182,6 @@ app.post("/auth/", (request, response) => {
                 response.statuscode = 200;
             });
 
-=======
-    
-    if (user != undefined) {
-        if (password == user.password) {
-            response.statuscode = 200;
-            response.json({ token: "token falso" });
->>>>>>> d7ef6d3e49cdc8b90fa3917c7363a7e7fe3897aa
             return;
         }
 
@@ -205,11 +190,7 @@ app.post("/auth/", (request, response) => {
         return;
     }
 
-<<<<<<< HEAD
     response.statuscode = 404;
-=======
-    response.sendStatus(404);
->>>>>>> d7ef6d3e49cdc8b90fa3917c7363a7e7fe3897aa
     response.json({ err: "E-mail enviado não foi encontradao na base de dados!" });
 })
 
